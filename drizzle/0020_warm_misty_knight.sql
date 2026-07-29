@@ -1,0 +1,1 @@
+ALTER TABLE `phone_calls` ADD `business_line` varchar(50);

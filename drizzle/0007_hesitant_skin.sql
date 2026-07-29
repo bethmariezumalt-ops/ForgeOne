@@ -1,0 +1,1 @@
+ALTER TABLE `work_orders` ADD `businessLine` enum('acme_automotive','customized_enterprise','onsite_advantage') DEFAULT 'acme_automotive' NOT NULL;
