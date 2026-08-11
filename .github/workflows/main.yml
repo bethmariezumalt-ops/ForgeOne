@@ -36,7 +36,7 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Build
-        run: pnpm build -- --base=/ForgeOne/
+        run: pnpm exec vite build --base=/ForgeOne/
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
@@ -44,8 +44,7 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./dist
-
+          path: ./dist/public
   deploy:
     environment:
       name: github-pages
