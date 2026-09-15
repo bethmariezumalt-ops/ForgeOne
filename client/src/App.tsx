@@ -105,15 +105,71 @@ function DashboardRouter() {
         {/* Admin */}
         <Route path="/team" component={Team} />
 function App() {
-function App() {
+function DashboardRouter() {
   return (
-    <Router base="/ForgeOne">
-      <ErrorBoundary>*/}
-        <Route path="/my-profile" component={UserProfile} />
-        <Route path="/team/:userId" component={UserProfile} />
-        <Route component={NotFound} />
-      </Switch>
-    </DashboardLayout>
+    <ViewAsProvider>
+      <DashboardLayout>
+        <Switch>
+          <Route path="/" component={Home} />
+          <Route path="/work-orders" component={WorkOrders} />
+          <Route path="/scan" component={ScanQR} />
+          <Route path="/scan/:vin" component={ScanQR} />
+          <Route path="/general-work" component={GeneralWork} />
+          <Route path="/calendar" component={Calendar} />
+
+          {/* Acme Automotive */}
+          <Route path="/vehicles" component={Vehicles} />
+          <Route path="/vehicles/:id" component={VehicleDetail} />
+          <Route path="/clients" component={Clients} />
+          <Route path="/invoices" component={Invoices} />
+          <Route path="/client-overview" component={ClientOverview} />
+          <Route path="/invoice-scanner" component={InvoiceScanner} />
+          <Route path="/inquiries" component={Inquiries} />
+
+          {/* On-Site Advantage */}
+          <Route path="/onsite-work-orders" component={OnsiteWorkOrders} />
+          <Route path="/onsite-invoices" component={OnsiteInvoices} />
+          <Route path="/onsite-clients" component={OnsiteClients} />
+          <Route path="/onsite-inquiries" component={OnsiteInquiries} />
+
+          {/* Customized Enterprise */}
+          <Route path="/custom-work-orders" component={CustomWorkOrders} />
+          <Route path="/custom-invoices" component={CustomInvoices} />
+          <Route path="/custom-clients" component={CustomClients} />
+          <Route path="/custom-inquiries" component={CustomInquiries} />
+          <Route path="/flip-projects" component={FlipProjects} />
+          <Route path="/assets" component={Assets} />
+          <Route path="/real-estate" component={RealEstate} />
+
+          {/* Operations */}
+          <Route path="/inventory" component={Inventory} />
+          <Route path="/driving" component={DrivingLog} />
+          <Route path="/expenses" component={Expenses} />
+          <Route path="/profitability" component={Profitability} />
+          <Route path="/time-billing" component={TimeBilling} />
+          <Route path="/job-board" component={JobBoard} />
+          <Route path="/hour-bank" component={HourBank} />
+          <Route path="/time-tracking" component={TimeTracking} />
+          <Route path="/parts-tracker" component={PartsTracker} />
+          <Route path="/profit-tracker" component={ProfitTracker} />
+
+          {/* All Clients */}
+          <Route path="/total-clients" component={TotalClients} />
+          <Route path="/employee-tasks" component={EmployeeTasks} />
+          <Route path="/phone-calls" component={PhoneCalls} />
+
+          {/* Admin */}
+          <Route path="/team" component={Team} />
+          <Route path="/pay" component={PayTracking} />
+          <Route path="/tech-performance" component={TechPerformance} />
+
+          {/* Personal */}
+          <Route path="/my-profile" component={UserProfile} />
+          <Route path="/team/:userId" component={UserProfile} />
+
+          <Route component={NotFound} />
+        </Switch>
+      </DashboardLayout>
     </ViewAsProvider>
   );
 }
@@ -122,19 +178,18 @@ function App() {
   return (
     <Router base="/ForgeOne">
       <ErrorBoundary>
-      <ThemeProvider defaultTheme="light">
-        <TooltipProvider>
-          <Toaster />
-          <Switch           {/* Public-facing customer portal (no auth required) */}
-            <Route path="/portal" component={CustomerPortal} />
-            {/* All other routes go through the authenticated dashboard layout */}
-            <Route>
-              <DashboardRouter />
-            </Route>
-          </Switch>
-        </TooltipProvider>
-      </ThemeProvider>
-    </ErrorBoundary>
+        <ThemeProvider defaultTheme="light">
+          <TooltipProvider>
+            <Toaster />
+            <Switch>
+              <Route path="/portal" component={CustomerPortal} />
+              <Route>
+                <DashboardRouter />
+              </Route>
+            </Switch>
+          </TooltipProvider>
+        </ThemeProvider>
+      </ErrorBoundary>
     </Router>
   );
 }
