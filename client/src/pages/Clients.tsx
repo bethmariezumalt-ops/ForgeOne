@@ -16,7 +16,7 @@ import { toast } from "sonner";
 export default function Clients() {
   const [clients, setClients] = useState<any[]>([]);
   const [saving, setSaving] = useState(false);
-  const [loadingClients, setLoadingClients] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", clientType: "regular", contactName: "", contactEmail: "", contactPhone: "", address: "", color: "#3B82F6" });
