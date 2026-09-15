@@ -20,7 +20,16 @@ export default function Clients() {
   const [open, setOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", clientType: "regular", contactName: "", contactEmail: "", contactPhone: "", address: "", color: "#3B82F6" });
-  const resetForm = () => setForm({ name: "", clientType: "regular", contactName: "", contactEmail: "", contactPhone: "", address: "", color: "#3B82F6" });
+  const resetForm = () => setForm({
+  name: "",
+  clientType: "regular",
+  contactName: "",
+  contactEmail: "",
+  contactPhone: "",
+  address: "",
+  color: "#3B82F6",
+  businesses: ["acme_automotive"],
+});
 
   const loadClients = async () => {
   setIsLoading(true);
@@ -64,7 +73,9 @@ useEffect(() => {
 
   setSaving(true);
 
-  const { error } = await supabase.from("clients").insert({
+  const { data: newClient, error } = await supabase
+  .from("clients")
+  .insert({
     name: form.name.trim(),
     client_type: form.clientType,
     contact_name: form.contactName || null,
@@ -73,8 +84,25 @@ useEffect(() => {
     address: form.address || null,
     color: form.color,
     branch: "acme_automotive",
-  });
+  })
+  .select("id")
+  .single();
+if (!error && newClient) {
+  const { error: businessError } = await supabase
+    .from("client_businesses")
+    .insert(
+      form.businesses.map((business) => ({
+        client_id: newClient.id,
+        business,
+      }))
+    );
 
+  if (businessError) {
+    toast.error(businessError.message);
+    setSaving(false);
+    return;
+  }
+}
   if (error) {
     toast.error(error.message);
   } else {
@@ -123,6 +151,32 @@ useEffect(() => {
                   <div><Label>Contact Name</Label><Input value={form.contactName} onChange={e => setForm(f => ({...f, contactName: e.target.value}))} /></div>
                   <div><Label>Contact Phone</Label><Input value={form.contactPhone} onChange={e => setForm(f => ({...f, contactPhone: e.target.value}))} /></div>
                 </div>
+                <div className="col-span-2">
+  <Label>Businesses</Label>
+  <div className="mt-2 space-y-2">
+    {[
+      ["acme_automotive", "ACME Automotive Services"],
+      ["on_site_advantage", "On-Site Advantage"],
+      ["customized_enterprise", "Customize Enterprises"],
+    ].map(([value, label]) => (
+      <label key={value} className="flex items-center gap-2">
+        <input
+          type="checkbox"
+          checked={form.businesses.includes(value)}
+          onChange={(e) =>
+            setForm((f) => ({
+              ...f,
+              businesses: e.target.checked
+                ? [...f.businesses, value]
+                : f.businesses.filter((business) => business !== value),
+            }))
+          }
+        />
+        <span>{label}</span>
+      </label>
+    ))}
+  </div>
+</div>
                 <div><Label>Contact Email</Label><Input type="email" value={form.contactEmail} onChange={e => setForm(f => ({...f, contactEmail: e.target.value}))} /></div>
                 <div><Label>Address</Label><Textarea value={form.address} onChange={e => setForm(f => ({...f, address: e.target.value}))} /></div>
                 <div>
