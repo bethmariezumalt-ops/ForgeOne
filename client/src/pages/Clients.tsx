@@ -214,13 +214,6 @@ if (!error && newClient) {
 }
 
 function ClientCard({ client: c, isExpanded, onToggle }: { client: any; isExpanded: boolean; onToggle: () => void }) {
-  const { data: callHistory } = trpc.phoneCall.list.useQuery(
-    { clientId: c.id },
-    { enabled: isExpanded }
-  );
-  const updateCall = trpc.phoneCall.update.useMutation({
-    onSuccess: () => { toast.success("Call updated"); },
-  });
 
   return (
     <Card className={`transition-all ${isExpanded ? "col-span-full md:col-span-2 lg:col-span-3" : "hover:shadow-md"}`}>
