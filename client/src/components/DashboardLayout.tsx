@@ -118,7 +118,7 @@ export default function DashboardLayout({
       <div className="flex items-center justify-center min-h-screen bg-background">
         <div className="flex flex-col items-center gap-8 p-8 max-w-md w-full">
           <div className="flex flex-col items-center gap-4">
-            <img src={`${import.meta.env.BASE_URL}B9F555B9-F208-48EE-9499-BABD9075EC0F.png`}" alt="Acme Automotive" className="h-24 w-24 rounded-xl object-cover" />
+            <img src={`${import.meta.env.BASE_URL}B9F555B9-F208-48EE-9499-BABD9075EC0F.png`} alt="Acme Automotive" className="h-24 w-24 rounded-xl object-cover" />
             <h1 className="text-2xl font-bold tracking-tight text-center">
               Acme Automotive Services
             </h1>
@@ -305,7 +305,7 @@ function DashboardLayoutContent({
                 className="h-10 w-10 flex items-center justify-center hover:bg-accent rounded-lg transition-colors focus:outline-none shrink-0"
                 aria-label="Toggle navigation"
               >
-                <img src={`${import.meta.env.BASE_URL}B9F555B9-F208-48EE-9499-BABD9075EC0F.png`}" alt="Acme" className="h-9 w-9 rounded-lg object-cover" />
+                 <img src={`${import.meta.env.BASE_URL}B9F555B9-F208-48EE-9499-BABD9075EC0F.png`} alt="Acme Automotive" className="h-24 w-24 rounded-xl object-cover" />
               </button>
               {!isCollapsed && (
                 <span className="font-bold tracking-tight truncate text-sm">
