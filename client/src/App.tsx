@@ -104,7 +104,6 @@ function DashboardRouter() {
         <Route path="/phone-calls" component={PhoneCalls} />
         {/* Admin */}
         <Route path="/team" component={Team} />
-function App() {
 function DashboardRouter() {
   return (
     <ViewAsProvider>
