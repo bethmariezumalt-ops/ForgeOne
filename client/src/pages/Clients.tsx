@@ -19,7 +19,16 @@ export default function Clients() {
   const [isLoading, setIsLoading] = useState(true);
   const [open, setOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
-  const [form, setForm] = useState({ name: "", clientType: "regular", contactName: "", contactEmail: "", contactPhone: "", address: "", color: "#3B82F6" });
+  const [form, setForm] = useState({
+  name: "",
+  clientType: "regular",
+  contactName: "",
+  contactEmail: "",
+  contactPhone: "",
+  address: "",
+  color: "#3B82F6",
+  businesses: ["acme_automotive"] as string[],
+});
   const resetForm = () => setForm({
   name: "",
   clientType: "regular",
