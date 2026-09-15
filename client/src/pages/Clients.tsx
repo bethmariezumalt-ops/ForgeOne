@@ -1,10 +1,11 @@
 import { trpc } from "@/lib/trpc";
+import { supabase } from "@/lib/supabase";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Plus, Building2, Download, Phone, Mail, MapPin, ChevronDown, ChevronUp, PhoneCall, PhoneOff, PhoneMissed, Check } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -13,26 +14,78 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 
 export default function Clients() {
-  const { data: clients, isLoading, refetch } = trpc.clients.list.useQuery();
-  const createMutation = trpc.clients.create.useMutation({ onSuccess: () => { refetch(); setOpen(false); toast.success("Client added"); resetForm(); } });
-  const seedMutation = trpc.seed.loadDefaultClients.useMutation({ onSuccess: (data) => { refetch(); if (data && data.length > 0) { toast.success(`Loaded ${data.length} starter client(s)`); } else { toast.info("Default clients already exist"); } } });
+  const [clients, setClients] = useState<any[]>([]);
+  const [saving, setSaving] = useState(false);
+  const [loadingClients, setLoadingClients] = useState(false);
   const [open, setOpen] = useState(false);
   const [expandedId, setExpandedId] = useState<number | null>(null);
   const [form, setForm] = useState({ name: "", clientType: "regular", contactName: "", contactEmail: "", contactPhone: "", address: "", color: "#3B82F6" });
   const resetForm = () => setForm({ name: "", clientType: "regular", contactName: "", contactEmail: "", contactPhone: "", address: "", color: "#3B82F6" });
 
-  const handleCreate = () => {
-    if (!form.name) { toast.error("Client name is required"); return; }
-    createMutation.mutate({
-      name: form.name,
-      clientType: form.clientType as any,
-      contactName: form.contactName || undefined,
-      contactEmail: form.contactEmail || undefined,
-      contactPhone: form.contactPhone || undefined,
-      address: form.address || undefined,
-      color: form.color,
-    });
-  };
+  const loadClients = async () => {
+  setIsLoading(true);
+
+  const { data, error } = await supabase
+    .from("clients")
+    .select("*")
+    .eq("branch", "acme_automotive")
+    .order("name");
+
+  if (error) {
+    toast.error(error.message);
+    setClients([]);
+  } else {
+    setClients(
+      (data ?? []).map((client) => ({
+        id: client.id,
+        name: client.name,
+        clientType: client.client_type,
+        contactName: client.contact_name,
+        contactEmail: client.contact_email,
+        contactPhone: client.contact_phone,
+        address: client.address,
+        color: client.color,
+        createdAt: client.created_at,
+      }))
+    );
+  }
+
+  setIsLoading(false);
+};
+
+useEffect(() => {
+  loadClients();
+}, []);
+  const handleCreate = async () => {
+  if (!form.name.trim()) {
+    toast.error("Client name is required");
+    return;
+  }
+
+  setSaving(true);
+
+  const { error } = await supabase.from("clients").insert({
+    name: form.name.trim(),
+    client_type: form.clientType,
+    contact_name: form.contactName || null,
+    contact_email: form.contactEmail || null,
+    contact_phone: form.contactPhone || null,
+    address: form.address || null,
+    color: form.color,
+    branch: "acme_automotive",
+  });
+
+  if (error) {
+    toast.error(error.message);
+  } else {
+    toast.success("Client added");
+    resetForm();
+    setOpen(false);
+    await loadClients();
+  }
+
+  setSaving(false);
+};
 
   if (isLoading) return <div className="space-y-4">{[1,2,3].map(i => <Skeleton key={i} className="h-20 rounded-xl" />)}</div>;
 
@@ -44,11 +97,7 @@ export default function Clients() {
           <p className="text-muted-foreground mt-1">{clients?.length ?? 0} clients</p>
         </div>
         <div className="flex gap-2">
-          {(!clients || clients.length === 0) && (
-            <Button variant="outline" onClick={() => seedMutation.mutate()} disabled={seedMutation.isPending}>
-              <Download className="h-4 w-4 mr-2" />{seedMutation.isPending ? "Loading..." : "Load Starter Clients"}
-            </Button>
-          )}
+     
           <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
               <Button><Plus className="h-4 w-4 mr-2" />Add Client</Button>
@@ -83,9 +132,9 @@ export default function Clients() {
                     <span className="text-sm text-muted-foreground">Used for calendar & dashboard</span>
                   </div>
                 </div>
-                <Button onClick={handleCreate} disabled={createMutation.isPending} className="w-full">
-                  {createMutation.isPending ? "Adding..." : "Add Client"}
-                </Button>
+                <Button onClick={handleCreate} disabled={saving} className="w-full">
+  {saving ? "Adding..." : "Add Client"}
+</Button>
               </div>
             </DialogContent>
           </Dialog>
