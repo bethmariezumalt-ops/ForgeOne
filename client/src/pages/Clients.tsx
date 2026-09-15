@@ -285,45 +285,6 @@ function ClientCard({ client: c, isExpanded, onToggle }: { client: any; isExpand
               </div>
             </div>
 
-            {/* Phone Call History */}
-            <div>
-              <p className="text-sm font-medium mb-2 flex items-center gap-1">
-                <PhoneCall className="h-4 w-4" /> Phone Call History
-              </p>
-              {!callHistory || callHistory.length === 0 ? (
-                <p className="text-xs text-muted-foreground bg-muted/50 p-3 rounded">No phone calls logged for this client yet.</p>
-              ) : (
-                <div className="space-y-2 max-h-48 overflow-y-auto">
-                  {(callHistory as any[]).map((call: any) => {
-                    const outcomeIcon = call.outcome === "reached" ? <PhoneCall className="h-3 w-3 text-green-600" /> :
-                      call.outcome === "voicemail" ? <PhoneOff className="h-3 w-3 text-amber-600" /> :
-                      call.outcome === "no_answer" ? <PhoneMissed className="h-3 w-3 text-red-600" /> :
-                      <Phone className="h-3 w-3 text-blue-600" />;
-                    const bizLabels: Record<string, string> = { acme_automotive: "Acme Auto", customized_enterprise: "Custom Ent.", onsite_advantage: "On-Site", real_estate: "Real Estate" };
-                    return (
-                      <div key={call.id} className={`flex items-center gap-2 p-2 rounded text-xs ${call.isCompleted ? "bg-green-50 border border-green-100" : "bg-muted/50"}`}>
-                        {outcomeIcon}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-center gap-1">
-                            <span className="font-medium">{call.contactName}</span>
-                            {call.businessLine && <span className="text-[9px] bg-primary/10 text-primary px-1 rounded">{bizLabels[call.businessLine] || call.businessLine}</span>}
-                            <span className="text-muted-foreground">• {call.outcome?.replace("_", " ")}</span>
-                          </div>
-                          {call.notes && <p className="text-muted-foreground truncate">{call.notes}</p>}
-                          <p className="text-muted-foreground">{call.createdAt ? new Date(call.createdAt).toLocaleDateString() : ""}</p>
-                        </div>
-                        {!call.isCompleted && (
-                          <Button size="sm" variant="ghost" className="h-6 w-6 p-0 shrink-0" onClick={() => updateCall.mutate({ id: call.id, isCompleted: true })} title="Mark complete">
-                            <Check className="h-3 w-3 text-green-600" />
-                          </Button>
-                        )}
-                        {call.isCompleted && <Badge variant="outline" className="text-[9px] text-green-600 border-green-200">Done</Badge>}
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
-            </div>
           </div>
         )}
       </CardContent>
