@@ -1,7 +1,7 @@
 import { Toaster } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import NotFound from "@/pages/NotFound";
-import { Route, Switch } from "wouter";
+import { Router, Route, Switch } from "wouter";
 import ErrorBoundary from "./components/ErrorBoundary";
 import { ThemeProvider } from "./contexts/ThemeContext";
 import DashboardLayout from "./components/DashboardLayout";
@@ -104,9 +104,11 @@ function DashboardRouter() {
         <Route path="/phone-calls" component={PhoneCalls} />
         {/* Admin */}
         <Route path="/team" component={Team} />
-        <Route path="/pay" component={PayTracking} />
-        <Route path="/tech-performance" component={TechPerformance} />
-        {/* Personal */}
+function App() {
+function App() {
+  return (
+    <Router base="/ForgeOne">
+      <ErrorBoundary>*/}
         <Route path="/my-profile" component={UserProfile} />
         <Route path="/team/:userId" component={UserProfile} />
         <Route component={NotFound} />
@@ -118,12 +120,12 @@ function DashboardRouter() {
 
 function App() {
   return (
-    <ErrorBoundary>
+    <Router base="/ForgeOne">
+      <ErrorBoundary>
       <ThemeProvider defaultTheme="light">
         <TooltipProvider>
           <Toaster />
-          <Switch>
-            {/* Public-facing customer portal (no auth required) */}
+          <Switch           {/* Public-facing customer portal (no auth required) */}
             <Route path="/portal" component={CustomerPortal} />
             {/* All other routes go through the authenticated dashboard layout */}
             <Route>
@@ -133,6 +135,7 @@ function App() {
         </TooltipProvider>
       </ThemeProvider>
     </ErrorBoundary>
+    </Router>
   );
 }
 
