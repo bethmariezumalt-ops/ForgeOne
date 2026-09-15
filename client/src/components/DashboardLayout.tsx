@@ -32,6 +32,7 @@ import { CSSProperties, useEffect, useRef, useState } from "react";
 import { useLocation } from "wouter";
 import { DashboardLayoutSkeleton } from './DashboardLayoutSkeleton';
 import { Button } from "./ui/button";
+import { Input } from "./ui/input";
 import { Separator } from "./ui/separator";
 import { useHeartbeat } from "@/hooks/useHeartbeat";
 import { useViewAs } from "@/contexts/ViewAsContext";
@@ -105,6 +106,10 @@ export default function DashboardLayout({
     return saved ? parseInt(saved, 10) : DEFAULT_WIDTH;
   });
   const { loading, user } = useAuth();
+  const [email, setEmail] = useState("");
+const [password, setPassword] = useState("");
+const [loginError, setLoginError] = useState("");
+const [signingIn, setSigningIn] = useState(false);
 
   useEffect(() => {
     localStorage.setItem(SIDEBAR_WIDTH_KEY, sidebarWidth.toString());
@@ -127,20 +132,52 @@ export default function DashboardLayout({
               Fleet management, work orders, and business tracking. Sign in to continue.
             </p>
           </div>
-          <Button
-            onClick={async () => {
-  await supabase.auth.signInWithOAuth({
-    provider: "google",
-    options: {
-      redirectTo: window.location.href,
-    },
-  });
-}}
-            size="lg"
-            className="w-full shadow-lg hover:shadow-xl transition-all"
-          >
-            Sign in
-          </Button>
+         <div className="w-full space-y-3">
+  <Input
+    type="email"
+    placeholder="Email"
+    value={email}
+    onChange={(e) => setEmail(e.target.value)}
+    autoComplete="email"
+  />
+
+  <Input
+    type="password"
+    placeholder="Password"
+    value={password}
+    onChange={(e) => setPassword(e.target.value)}
+    autoComplete="current-password"
+  />
+
+  {loginError && (
+    <p className="text-sm text-destructive text-center">
+      {loginError}
+    </p>
+  )}
+
+  <Button
+    onClick={async () => {
+      setLoginError("");
+      setSigningIn(true);
+
+      const { error } = await supabase.auth.signInWithPassword({
+        email,
+        password,
+      });
+
+      if (error) {
+        setLoginError(error.message);
+      }
+
+      setSigningIn(false);
+    }}
+    size="lg"
+    className="w-full shadow-lg hover:shadow-xl transition-all"
+    disabled={signingIn || !email || !password}
+  >
+    {signingIn ? "Signing in..." : "Sign in"}
+  </Button>
+</div>
           <div className="w-full border rounded-lg p-4 bg-muted/30">
             <p className="text-xs font-medium text-center mb-2">Install as App on Your Phone</p>
             <div className="text-xs text-muted-foreground space-y-1">
