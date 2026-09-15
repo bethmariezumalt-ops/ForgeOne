@@ -1,4 +1,5 @@
 import { useAuth } from "@/_core/hooks/useAuth";
+import { supabase } from "@/lib/supabase";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import {
   DropdownMenu,
@@ -127,9 +128,14 @@ export default function DashboardLayout({
             </p>
           </div>
           <Button
-            onClick={() => {
-              window.location.href = getLoginUrl();
-            }}
+            onClick={async () => {
+  await supabase.auth.signInWithOAuth({
+    provider: "google",
+    options: {
+      redirectTo: window.location.href,
+    },
+  });
+}}
             size="lg"
             className="w-full shadow-lg hover:shadow-xl transition-all"
           >
